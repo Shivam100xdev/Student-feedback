@@ -1,0 +1,35 @@
+# Local PostgreSQL for the Student Services Feedback portal.
+#
+#   docker compose up -d
+#   npm run db:migrate   # first run only
+#   npm run db:seed
+#
+# The host port is 5434 on purpose: a PostgreSQL server installed directly on
+# the machine normally owns 5432, which would shadow this container and make
+# `.env.local` connect to the wrong database.
+#
+# POSTGRES_PASSWORD comes from `.env` (compose reads it automatically) and must
+# match the password in DATABASE_URL in `.env.local`.
+
+services:
+  db:
+    image: postgres:16
+    container_name: feedback-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-feedback_db}
+    ports:
+      - "5434:5432"
+    volumes:
+      - feedback_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  feedback_pgdata:
+    name: feedback_pgdata

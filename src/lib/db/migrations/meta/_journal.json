@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1794883355650,
+      "tag": "0000_exotic_sabra",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1795101442606,
+      "tag": "0001_auth_credentials",
+      "breakpoints": true
+    }
+  ]
+}
