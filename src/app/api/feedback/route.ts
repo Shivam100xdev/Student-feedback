@@ -123,7 +123,10 @@ export async function POST(req: Request) {
     if (session?.user && (session.user as any).id) {
       // Authenticated user
       userId = (session.user as any).id;
-      anonId = (session.user as any).anonId;
+      // Tokens issued before anon_id was added to the session have no anonId;
+      // derive it from the email (same HMAC as users.anon_id) instead of passing undefined.
+      const anonIdentity = session.user.email ?? String(userId);
+      anonId = (session.user as any).anonId || computeAnonId(anonIdentity);
       rateLimitType = "authenticated";
     } else {
       // Anonymous user: verify Turnstile only in production (optional - warn but don't block)

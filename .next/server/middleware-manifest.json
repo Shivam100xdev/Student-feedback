@@ -1,0 +1,32 @@
+{
+  "version": 3,
+  "middleware": {
+    "/": {
+      "files": [
+        "server/edge-runtime-webpack.js",
+        "server/middleware.js"
+      ],
+      "name": "middleware",
+      "page": "/",
+      "matchers": [
+        {
+          "regexp": "^/.*$",
+          "originalSource": "/:path*"
+        }
+      ],
+      "wasm": [],
+      "assets": [],
+      "env": {
+        "__NEXT_BUILD_ID": "development",
+        "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "o1pTv6rOsXUf08loiZIyfkVTsZtqdQGOzeatizB5y0c=",
+        "__NEXT_PREVIEW_MODE_ID": "428b52e1a5745a92331aba0c80baa298",
+        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "cb270d192e0dd1f138c9f887e9cc3d29910c3d2da5df8e201b51f144d0e9c0cc",
+        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "819b30a746876205e1fe9e36e45213785dd5c2f95bb3215f10fd683f77ba7396"
+      }
+    }
+  },
+  "functions": {},
+  "sortedMiddleware": [
+    "/"
+  ]
+}

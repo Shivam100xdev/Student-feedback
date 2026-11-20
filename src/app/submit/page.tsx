@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Loader2, CheckCircle2, Shield, Paperclip, X, FileText, Image, AlertTriangle, CheckCircle, Mic, MicOff } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
+import { classifyWithRules } from "@/lib/ai";
 
 // Type for SpeechRecognition (browser API not in standard TS lib)
 interface SpeechRecognition extends EventTarget {
@@ -148,7 +149,6 @@ export default function SubmitFeedback() {
     setLoading(true);
     // Use rule-based classifier for instant preview
     setTimeout(() => {
-      const { classifyWithRules } = require("@/lib/ai");
       const result = classifyWithRules(text, category || "INFRASTRUCTURE");
       setAnalysis(result);
       setLoading(false);

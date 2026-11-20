@@ -4,6 +4,7 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import AzureADProvider from "next-auth/providers/azure-ad";
 import { findEnvAccountByEmail, upsertOAuthUser, verifyCollegeCredentials, type AppRole } from "./users";
+import { computeAnonId } from "./crypto";
 
 const hasGoogle = Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
 const hasMicrosoft = Boolean(process.env.MICROSOFT_CLIENT_ID && process.env.MICROSOFT_CLIENT_SECRET);
@@ -95,6 +96,11 @@ export const authOptions: NextAuthOptions = {
         token.email = user.email ?? null;
         token.picture = user.image ?? null;
       }
+      // anon_id is derived server-side from the account email (same one-way HMAC as
+      // users.anon_id) so feedback stays unlinkable to the identity. The feedback API
+      // needs it for rate limiting and the student "my feedback" filter.
+      token.anonId =
+        typeof token.email === "string" && token.email ? computeAnonId(token.email) : null;
       return token;
     },
 
@@ -103,6 +109,7 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).id = token.uid;
         (session.user as any).role = token.role ?? "STUDENT";
         (session.user as any).collegeId = token.collegeId ?? null;
+        (session.user as any).anonId = token.anonId ?? null;
         session.user.name = (token.name as string) ?? session.user.name;
         session.user.email = (token.email as string) ?? session.user.email;
         session.user.image = (token.picture as string) ?? session.user.image;

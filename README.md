@@ -39,15 +39,21 @@ npm install
 cp .env.example .env.local
 # Edit .env.local with your secrets (see Authentication below)
 
-# 3b. Docker Postgres password (must match the password in DATABASE_URL)
-echo "POSTGRES_PASSWORD=<same-password-as-in-DATABASE_URL>" > .env
+# 3b. Start PostgreSQL and load the schema + demo accounts (one command)
+npm run db:setup
 
-# 4. (optional) Start PostgreSQL, run migrations + seed college accounts
-docker compose up -d            # Postgres on localhost:5434
-npm run db:migrate
-npm run db:seed
+# It starts the container on localhost:5434, waits for its healthcheck, then
+# applies the migrations and seeds the demo accounts. It also creates `.env`
+# (POSTGRES_PASSWORD taken from DATABASE_URL) and `.env.local` from
+# `.env.example` if they are missing.
+#
+# Step by step instead:
+#   echo "POSTGRES_PASSWORD=<same-password-as-in-DATABASE_URL>" > .env
+#   docker compose up -d
+#   npm run db:migrate
+#   npm run db:seed
 
-# 5. Run development server
+# 4. Run development server
 npm run dev
 ```
 
@@ -103,9 +109,11 @@ The Google Cloud project may belong to a personal Gmail account — that does no
 Credentials are verified against the `users` table (`college_id` + `password_hash`). Create them with:
 
 ```bash
-npm run db:seed                            # demo student + admin below
+npm run db:seed                            # demo accounts + demo campus data below
 npm run auth:hash-password -- "NewPass123" # hash for your own accounts
 ```
+
+Seeding also fills the rest of the demo dataset (safe to re-run, rows are upserted): 8 campus locations, 36 SLA rules (every category x severity), 14 complaints across categories/severities/languages/statuses, 4 issue clusters and 5 published "You Said, We Did" resolutions. That is enough for the admin dashboard, heatmap and analytics screens to render real numbers.
 
 Demo accounts after seeding:
 

@@ -13,7 +13,7 @@ import {
   CardContent,
 } from "@/components/ui/chart";
 import { Button } from "@/components/ui/button";
-import { Loader2, AlertCircle, CheckCircle2, Users, FileDown, Filter, X, ChevronDown, AlertTriangle, TrendingUp, TrendingDown } from "lucide-react";
+import { Loader2, AlertCircle, CheckCircle2, Users, FileDown, Filter, X, ChevronDown, AlertTriangle, TrendingUp, TrendingDown, Globe } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 
 interface FeedbackData {
@@ -110,6 +110,8 @@ export default function AdminDashboard() {
   const [showFilters, setShowFilters] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState<string[]>([]);
   const [bulkActionLoading, setBulkActionLoading] = useState(false);
+  const [publishingId, setPublishingId] = useState<string | null>(null);
+  const [publishedIds, setPublishedIds] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<"table" | "cards">("table");
 
   useEffect(() => {
@@ -201,6 +203,34 @@ export default function AdminDashboard() {
     name: s,
     value: severityData[s] || 0,
   }));
+
+  const handlePublishToWall = async (feedbackItem: FeedbackData) => {
+    setPublishingId(feedbackItem.id);
+    try {
+      const res = await fetch("/api/resolutions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ feedbackId: feedbackItem.id }),
+      });
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        setPublishedIds((prev) => (prev.includes(feedbackItem.id) ? prev : [...prev, feedbackItem.id]));
+        toast(
+          data.created
+            ? "Published to the public wall"
+            : "Public wall entry updated",
+          "success",
+        );
+      } else {
+        toast(data.error || "Failed to publish to the public wall", "error");
+      }
+    } catch (e) {
+      toast("Failed to publish to the public wall", "error");
+    } finally {
+      setPublishingId(null);
+    }
+  };
 
   const handleExport = async () => {
     try {
@@ -700,6 +730,7 @@ export default function AdminDashboard() {
                     <th className="p-3 text-left">Created</th>
                     <th className="p-3 text-left">SLA</th>
                     <th className="p-3 text-left">Flags</th>
+                    <th className="p-3 text-left">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -779,6 +810,25 @@ export default function AdminDashboard() {
                             <span className="px-1.5 py-0.5 text-xs bg-orange-100 text-orange-700 rounded">AI Retry</span>
                           )}
                         </div>
+                      </td>
+                      <td className="p-3">
+                        {feedback.status === "RESOLVED" ? (
+                          <Button
+                            variant={publishedIds.includes(feedback.id) ? "secondary" : "outline"}
+                            size="sm"
+                            onClick={() => handlePublishToWall(feedback)}
+                            disabled={publishingId === feedback.id}
+                          >
+                            {publishingId === feedback.id ? (
+                              <Loader2 className="w-3 h-3 animate-spin mr-1" />
+                            ) : (
+                              <Globe className="w-3 h-3 mr-1" />
+                            )}
+                            {publishedIds.includes(feedback.id) ? "Published" : "Publish"}
+                          </Button>
+                        ) : (
+                          <span className="text-slate-400">—</span>
+                        )}
                       </td>
                     </tr>
                   ))}

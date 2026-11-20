@@ -6,11 +6,15 @@ import { generateWeeklyInsights } from "@/lib/ai";
 
 // This endpoint is called by Vercel Cron or QStash on a schedule
 export async function GET(req: Request) {
-  // Verify cron secret
+  // Verify cron secret - required, never run unauthenticated
   const authHeader = req.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET;
 
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+  if (!cronSecret) {
+    console.error("CRON_SECRET is not set; refusing to run the weekly insights job.");
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

@@ -1,5 +1,8 @@
 # Local PostgreSQL for the Student Services Feedback portal.
 #
+#   npm run db:setup     # start + wait for health + migrate + seed
+#
+# Or step by step:
 #   docker compose up -d
 #   npm run db:migrate   # first run only
 #   npm run db:seed

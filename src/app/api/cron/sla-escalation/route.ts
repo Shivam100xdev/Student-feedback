@@ -5,11 +5,15 @@ import { NextResponse } from "next/server";
 
 // This endpoint is called by Vercel Cron or QStash on a schedule (e.g., every hour)
 export async function GET(req: Request) {
-  // Verify cron secret
+  // Verify cron secret - required, never run unauthenticated
   const authHeader = req.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET;
 
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+  if (!cronSecret) {
+    console.error("CRON_SECRET is not set; refusing to run the SLA escalation job.");
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

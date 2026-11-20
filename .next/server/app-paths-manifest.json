@@ -1,0 +1,12 @@
+{
+  "/api/feedback/route": "app/api/feedback/route.js",
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/api/track/route": "app/api/track/route.js",
+  "/api/public-resolutions/route": "app/api/public-resolutions/route.js",
+  "/auth/signin/page": "app/auth/signin/page.js",
+  "/submit/page": "app/submit/page.js",
+  "/track/page": "app/track/page.js",
+  "/resolutions/page": "app/resolutions/page.js",
+  "/dashboard/analytics/page": "app/dashboard/analytics/page.js",
+  "/dashboard/page": "app/dashboard/page.js"
+}

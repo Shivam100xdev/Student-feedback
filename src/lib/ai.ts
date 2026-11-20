@@ -1,5 +1,3 @@
-import { createHmac } from "crypto";
-
 /**
  * AI Classification Module
  * Uses Claude API (Haiku for speed) with rule-based fallback

@@ -88,6 +88,13 @@ export function analyzeComplaint(text: string): AnalysisResult {
     }
   }
 
+  // Safety reports (ragging, harassment, assault) must never be filed under the
+  // place they mention just because that place also matched a keyword, e.g.
+  // "ragging near the hostel block" must stay CONFIDENTIAL_SAFETY.
+  if (CATEGORY_KEYWORDS.CONFIDENTIAL_SAFETY.some(k => normalizedText.includes(k))) {
+    category = "CONFIDENTIAL_SAFETY";
+  }
+
   // 5. Sentiment Analysis
   let sentimentScore = 0;
   SENTIMENT_KEYWORDS.POSITIVE.forEach(k => { if (normalizedText.includes(k)) sentimentScore += 0.2; });
