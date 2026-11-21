@@ -137,5 +137,4 @@ Set `MICROSOFT_CLIENT_ID` / `MICROSOFT_CLIENT_SECRET` (and `MICROSOFT_TENANT_ID`
 ## Contributing
 Pull requests are welcome. Please run `npm test` before submitting.
 
----
-Generated with [Claude Code](https://claude.com/claude-code)
+
