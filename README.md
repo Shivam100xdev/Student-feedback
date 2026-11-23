@@ -66,7 +66,6 @@ npm run build
 npm start
 ```
 
-Deploy to any platform that supports Node.js (Vercel, Fly.io, Render, etc.).
 
 ## Directory Structure
 ```
